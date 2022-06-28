@@ -10,12 +10,17 @@ if (directory is null)
 new CommandBuilder.CommandBuilder()
     .UsePowershell()
     .AddWorkingDirectory(directory)
-    .AddCommand("cd ../../../../MyFakeLibrary")
+    // show what version of dotnet is loaded
     .AddCommand("dotnet --info")
+    // cd into the lbirary directory
+    .AddCommand("cd ../../../../MyFakeLibrary")
+    // build 
     .AddCommand("dotnet build MyFakeLibrary.csproj -c Release")
     .AddCommand("cd bin/Release/netstandard2.0")
+    // print artifacts
     .AddCommand("Get-Childitem")
+    // load built project into process and run one of the methods
     .AddCommand("Add-Type -Path .\\MyFakeLibrary.dll")
     .AddCommand("$obj = new-object MyFakeLibrary.TestClass")
-    .AddCommand("$obj.TestLibrary(\"test test\")")
+    .AddCommand("$obj.TestLibrary('test test')")
     .Run();
