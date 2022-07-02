@@ -1,8 +1,6 @@
-﻿using System;
-using System.Diagnostics;
-using System.Text;
+﻿using System.Diagnostics;
 
-namespace CommandBuilder;
+namespace ProcessRunner;
 
 public class CommandBuilder
 {
@@ -65,9 +63,11 @@ public class CommandBuilder
 
             proc.Refresh();
         }
-        
-        proc.StandardInput.WriteLine("exit");
 
+        proc.OutputDataReceived -= Proc_OutputDataReceived;
+        proc.ErrorDataReceived -= Proc_ErrorDataReceived;
+
+        proc.StandardInput.WriteLine("exit");
         proc.WaitForExit();
 
         proc.Close();

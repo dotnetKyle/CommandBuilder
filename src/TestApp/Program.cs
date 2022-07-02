@@ -1,4 +1,4 @@
-﻿using CommandBuilder;
+﻿using ProcessRunner;
 using System.Reflection;
 
 
@@ -7,7 +7,7 @@ var directory = Path.GetDirectoryName(execAssemblyLocation);
 if (directory is null)
     throw new Exception();
 
-new CommandBuilder.CommandBuilder()
+new CommandBuilder()
     .UsePowershell()
     .AddWorkingDirectory(directory)
     // show what version of dotnet is loaded
