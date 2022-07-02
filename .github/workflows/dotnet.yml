@@ -22,4 +22,4 @@ jobs:
     - name: Build
       run: dotnet build  src/ProcessRunner.sln -c Release --no-restore
     - name: Test
-      run: src/TestApp/bin/Release/net6.0/ dotnet TestApp.dll 
+      run: dotnet src/TestApp/bin/Release/net6.0/TestApp.dll 
