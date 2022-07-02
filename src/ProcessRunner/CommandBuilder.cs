@@ -4,12 +4,12 @@ namespace ProcessRunner;
 
 public class CommandBuilder
 {
-    List<string> commands;
+    List<ProcessCommand> commands;
     ProcessStartInfo startInfo;
 
     public CommandBuilder()
     {
-        commands = new List<string>();
+        commands = new List<ProcessCommand>();
         startInfo = new ProcessStartInfo
         {
             FileName = "cmd",
@@ -29,19 +29,28 @@ public class CommandBuilder
         startInfo.Arguments = "";
         return this;
     }
+
     public CommandBuilder AddWorkingDirectory(string workingDirectory)
     {
         startInfo.WorkingDirectory = workingDirectory;
         return this;
     }
+
     public CommandBuilder AddCommand(string cmd)
     {
-        commands.Add(cmd);
-
+        var command = new TypicalCommand(cmd);
+        commands.Add(command);
         return this;
     }
 
-    public void Run()
+    public CommandBuilder AddCommandWithOutput(string cmd)
+    {
+        var command = new GetOutputCommand(cmd);
+        commands.Add(command);
+        return this;
+    }
+
+    public List<(string Command, string? Output)> Run()
     {
         var proc = new Process();
 
@@ -59,27 +68,43 @@ public class CommandBuilder
 
         foreach(var cmd in commands)
         {
-            proc.StandardInput.WriteLine(cmd);
+            cmd.Run(proc);
 
             proc.Refresh();
         }
 
-        proc.OutputDataReceived -= Proc_OutputDataReceived;
-        proc.ErrorDataReceived -= Proc_ErrorDataReceived;
+        proc.Refresh();
 
         proc.StandardInput.WriteLine("exit");
         proc.WaitForExit();
 
         proc.Close();
+
+        var _output = new List<(string Command, string? Output)>();
+
+        foreach (var cmd in commands)
+        { 
+            if(cmd is GetOutputCommand)
+            {
+                var outputCmd = (GetOutputCommand)cmd;
+                _output.Add(new(outputCmd.Command, outputCmd.Output));
+            }
+        }
+
+        return _output;
     }
 
     private void Proc_ErrorDataReceived(object sender, DataReceivedEventArgs e)
     {
+        if (e.Data is null)
+            return;
+
         var fg = Console.ForegroundColor;
         Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine(e.Data);
+        Console.WriteLine("Error: " + e.Data);
         Console.ForegroundColor = fg;
     }
+
     private void Proc_OutputDataReceived(object sender, DataReceivedEventArgs e)
     {
         Console.WriteLine(e.Data);
