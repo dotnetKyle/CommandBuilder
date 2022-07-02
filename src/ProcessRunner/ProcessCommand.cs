@@ -4,5 +4,18 @@ namespace ProcessRunner;
 
 public abstract class ProcessCommand 
 {
-    public abstract void Run(Process process);
+    public void RunCommand(Process process)
+    {
+        try
+        {
+            Run(process);
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine("Error while running command.");
+            Console.WriteLine(ex);
+        }
+    }
+
+    protected abstract void Run(Process process);
 }

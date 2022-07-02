@@ -15,7 +15,7 @@ public class GetOutputCommand : ProcessCommand
     public string Command => _command;
     public string? Output { get; private set; }
 
-    public override void Run(Process process)
+    protected override void Run(Process process)
     {
         _process = process;
         _process.OutputDataReceived += Process_OutputDataReceived;
@@ -26,16 +26,23 @@ public class GetOutputCommand : ProcessCommand
     bool _outputIncoming = false;
     private void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)
     {
-        if(_outputIncoming)
-        {
-            Output = e.Data;
-            _outputIncoming = false;
-            _process!.OutputDataReceived -= Process_OutputDataReceived;
-        }
+        try
+        { 
+            if(_outputIncoming)
+            {
+                Output = e.Data;
+                _outputIncoming = false;
+                _process!.OutputDataReceived -= Process_OutputDataReceived;
+            }
 
-        if (e.Data.EndsWith(_command))
+            if (e.Data is not null && e.Data.EndsWith(_command))
+            {
+                _outputIncoming = true;
+            }
+        }
+        catch(Exception ex)
         {
-            _outputIncoming = true;
+            Console.WriteLine(ex);
         }
     }
 }

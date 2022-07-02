@@ -10,7 +10,7 @@ public class TypicalCommand : ProcessCommand
         _command = command;
     }
 
-    public override void Run(Process process)
+    protected override void Run(Process process)
     {
         process.StandardInput.WriteLine(_command);
     }
