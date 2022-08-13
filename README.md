@@ -5,7 +5,9 @@ Run command line tools inside CSharp.
 Example running some dotnet CLI commands:
 
 ```csharp
-CommandRunner()
+using ProcessRunner;
+
+CommandRunner
     .UsePowershell() 
     .StartProcess()
     // print the dotnet info command
