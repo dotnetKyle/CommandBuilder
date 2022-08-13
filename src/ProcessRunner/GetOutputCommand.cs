@@ -4,15 +4,11 @@ namespace ProcessRunner;
 
 public class GetOutputCommand : ProcessCommand
 {
-    string _command;
     Process? _process;
 
     public GetOutputCommand(string command)
-    {
-        _command = command;
-    }
+        : base(command) { }
 
-    public string Command => _command;
     public string? Output { get; private set; }
 
     protected override void Run(Process process)
@@ -20,7 +16,7 @@ public class GetOutputCommand : ProcessCommand
         _process = process;
         _process.OutputDataReceived += Process_OutputDataReceived;
 
-        process.StandardInput.WriteLine(_command);
+        process.StandardInput.WriteLine(Command);
     }
 
     bool _outputIncoming = false;
@@ -28,21 +24,27 @@ public class GetOutputCommand : ProcessCommand
     {
         try
         { 
-            if(_outputIncoming)
+            if(e.Data is not null)
             {
-                Output = e.Data;
-                _outputIncoming = false;
-                _process!.OutputDataReceived -= Process_OutputDataReceived;
-            }
+                if(_outputIncoming)
+                {
+                    Output = e.Data;
+                    _outputIncoming = false;
+                    _process!.OutputDataReceived -= Process_OutputDataReceived;
+                }
 
-            if (e.Data is not null && e.Data.EndsWith(_command))
-            {
-                _outputIncoming = true;
+                if (e.Data.EndsWith(Command))
+                {
+                    _outputIncoming = true;
+                }
             }
         }
         catch(Exception ex)
         {
+            var fg = Console.ForegroundColor;
+            Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine(ex);
+            Console.ForegroundColor = fg;
         }
     }
 }

@@ -1,113 +1,41 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 
 namespace ProcessRunner;
-
 public class CommandBuilder
 {
-    List<ProcessCommand> commands;
-    ProcessStartInfo startInfo;
+    CommandBuilderOptions _options;
 
-    public CommandBuilder()
+    public ProcessStartInfo StartInfo { get; set; }
+    public Process Process { get; set; }
+
+    internal CommandBuilder(CommandBuilderOptions options, Process process)
     {
-        commands = new List<ProcessCommand>();
-        startInfo = new ProcessStartInfo
+        Process = process;
+
+        Commands = new List<ProcessCommand>();
+        
+        _options = options;
+
+        StartInfo = new ProcessStartInfo
         {
-            FileName = "cmd",
-            Arguments = "/k",
+            FileName = options.File,
+            Arguments = options.Args,
             CreateNoWindow = true,
             WindowStyle = ProcessWindowStyle.Hidden,
             UseShellExecute = false,
-            RedirectStandardOutput = true,
-            RedirectStandardError = true, 
-            RedirectStandardInput = true
+            RedirectStandardOutput = options.RedirectStandardOutput,
+            RedirectStandardError = options.RedirectStandardError, 
+            RedirectStandardInput = options.RedirectStandardInput
         };
     }
 
-    public CommandBuilder UseBash()
-    {
-        startInfo.FileName = "/bin/bash";
-        startInfo.Arguments = "";
-        return this;
-    }
-
-    public CommandBuilder UsePowershell()
-    {
-        startInfo.FileName = "powershell";
-        startInfo.Arguments = "";
-        return this;
-    }
+    public List<ProcessCommand> Commands { get; private set; }
 
     public CommandBuilder AddWorkingDirectory(string workingDirectory)
     {
-        startInfo.WorkingDirectory = workingDirectory;
+        StartInfo.WorkingDirectory = workingDirectory;
         return this;
-    }
-
-    public CommandBuilder AddCommand(string cmd)
-    {
-        var command = new TypicalCommand(cmd);
-        commands.Add(command);
-        return this;
-    }
-
-    public CommandBuilder AddCommandWithOutput(string cmd)
-    {
-        var command = new GetOutputCommand(cmd);
-        commands.Add(command);
-        return this;
-    }
-
-    public List<(string Command, string? Output)>? Run()
-    {
-        try
-        {
-            var proc = new Process();
-
-            proc.StartInfo = startInfo;
-
-            var wd = proc.StartInfo.WorkingDirectory;
-
-            proc.OutputDataReceived += Proc_OutputDataReceived;
-            proc.ErrorDataReceived += Proc_ErrorDataReceived;
-
-            proc.Start();
-
-            proc.BeginOutputReadLine();
-            proc.BeginErrorReadLine();
-
-            foreach(var cmd in commands)
-            {
-                cmd.RunCommand(proc);
-                proc.Refresh();
-            }
-
-            proc.Refresh();
-
-            proc.StandardInput.WriteLine("exit");
-
-            proc.WaitForExit();
-
-            proc.Close();
-
-            var _output = new List<(string Command, string? Output)>();
-
-            foreach (var cmd in commands)
-            { 
-                if(cmd is GetOutputCommand)
-                {
-                    var outputCmd = (GetOutputCommand)cmd;
-                    _output.Add(new(outputCmd.Command, outputCmd.Output));
-                }
-            }
-
-            return _output;
-        }
-        catch(Exception ex)
-        {
-            Console.WriteLine("Error running commands.");
-            Console.WriteLine(ex);
-            return null;
-        }
     }
 
     private void Proc_ErrorDataReceived(object sender, DataReceivedEventArgs e)
@@ -118,14 +46,17 @@ public class CommandBuilder
                 return;
 
             var fg = Console.ForegroundColor;
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("Error: " + e.Data);
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine($"Error: {e.Data}");
             Console.ForegroundColor = fg;
         }
         catch(Exception ex)
         {
+            var fg = Console.ForegroundColor;
+            Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("Error while processing error data.");
             Console.WriteLine(ex);
+            Console.ForegroundColor = fg;
         }
     }
 
@@ -137,8 +68,11 @@ public class CommandBuilder
         }
         catch (Exception ex)
         {
+            var fg = Console.ForegroundColor;
+            Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("Error while processing output data.");
             Console.WriteLine(ex);
+            Console.ForegroundColor = fg;
         }
     }
 }
