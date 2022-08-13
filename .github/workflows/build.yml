@@ -9,7 +9,7 @@ env:
   SLN_PATH: src/ProcessRunner.sln
   TEST_PATH: src/TestApp/bin/Release/net6.0/TestApp.dll
   PROJECT_PATH: src/ProcessRunner/ProcessRunner.csproj
-  ARTIFACTS_PATH: src/ProcessRunner/ProcessRunner/bin/Release
+  ARTIFACTS_PATH: src/ProcessRunner/bin/Release
 
 jobs:
   build:
@@ -52,7 +52,7 @@ jobs:
       run: dotnet nuget push $ARTIFACTS_PATH/ProcessRunner.$BUILD_VERSION-alpha.nupkg 
            --api-key ${{secrets.NUGETKEY}} --source https://api.nuget.org/v3/index.json
            
-    - name: Upload MinimalMongo Release Artifacts
+    - name: Upload ProcessRunner Release Artifacts
       uses: actions/upload-artifact@v2
       with:
         name: Nugets
