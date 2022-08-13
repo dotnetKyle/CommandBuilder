@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ProcessRunner\ProcessRunner.csproj" />
+    <ProjectReference Include="..\ShellRunner\ShellRunner.csproj" />
   </ItemGroup>
 
 </Project>

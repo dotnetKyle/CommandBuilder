@@ -1,4 +1,4 @@
-﻿namespace ProcessRunner;
+﻿namespace ShellRunner;
 
 public enum ShellType
 {

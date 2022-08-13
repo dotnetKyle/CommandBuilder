@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace ProcessRunner;
+namespace ShellRunner;
 
 public static class CommandRunner
 {

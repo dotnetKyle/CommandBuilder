@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 
-namespace ProcessRunner;
+namespace ShellRunner;
 public class CommandBuilder
 {
     CommandBuilderOptions _options;
