@@ -48,14 +48,14 @@ jobs:
            -p:PackageVersion=$BUILD_VERSION
 
     - name: Push ShellRunner Pre-Release Nuget
-      run: dotnet nuget push /src/**/*.$BUILD_VERSION-alpha.nupkg  
+      run: dotnet nuget push src/**/*.$BUILD_VERSION-alpha.nupkg  
            --api-key ${{secrets.NUGETKEY}} --source https://api.nuget.org/v3/index.json
            
     - name: Upload ShellRunner Release Artifacts
       uses: actions/upload-artifact@v2
       with:
         name: ReleaseNugets
-        path: /src/**/*.$BUILD_VERSION.nupkg
+        path: src/**/*.$BUILD_VERSION.nupkg
 
   release:
     needs: build
@@ -74,5 +74,5 @@ jobs:
       run: ls -R
       
     - name: Push ShellRunner Pre-Release Nuget
-      run: dotnet nuget push /src/**/*.$BUILD_VERSION.nupkg 
+      run: dotnet nuget push src/**/*.$BUILD_VERSION.nupkg 
            --api-key ${{secrets.NUGETKEY}} --source https://api.nuget.org/v3/index.json
