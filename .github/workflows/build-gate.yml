@@ -1,25 +1,29 @@
-name: .NET
+name: pull-request-gate
 
 on:
-  push:
-    branches: [ "stable" ]
   pull_request:
-    branches: [ "stable" ]
+    branches: [ '*' ]
 
 jobs:
-  build:
+  build-gate:
 
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v2
     - name: Setup .NET
-      uses: actions/setup-dotnet@v2
+      uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 6.0.x
+
     - name: Restore dependencies
       run: dotnet restore src/ProcessRunner.sln
+
     - name: Build
-      run: dotnet build  src/ProcessRunner.sln -c Release --no-restore
+      run: dotnet build src/ProcessRunner.sln 
+           -c Release 
+           --no-restore 
+           -p:Version=0.1.${{github.run_number}}
+           
     - name: Test
       run: dotnet src/TestApp/bin/Release/net6.0/TestApp.dll 
