@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32602.215
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProcessRunner", "ProcessRunner\ProcessRunner.csproj", "{1B889E3F-E30A-42E8-9C96-683D5EC3DF9F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShellRunner", "ProcessRunner\ShellRunner.csproj", "{1B889E3F-E30A-42E8-9C96-683D5EC3DF9F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyFakeLibrary", "MyFakeLibrary\MyFakeLibrary.csproj", "{84B7073E-2B86-4DD7-8F7C-71D22A63912D}"
 EndProject

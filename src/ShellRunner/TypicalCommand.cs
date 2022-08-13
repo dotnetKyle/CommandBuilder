@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace ProcessRunner;
+namespace ShellRunner;
 
 public class TypicalCommand : ProcessCommand
 {

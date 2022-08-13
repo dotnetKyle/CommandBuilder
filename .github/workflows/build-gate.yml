@@ -6,7 +6,7 @@ on:
 
 env:
   BUILD_VERSION: 0.1.${{github.run_number}}
-  SLN_PATH: src/ProcessRunner.sln
+  SLN_PATH: src/ShellRunner.sln
   TEST_PATH: src/TestApp/bin/Release/net6.0/TestApp.dll
 
 jobs:

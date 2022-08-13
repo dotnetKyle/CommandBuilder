@@ -1,11 +1,11 @@
-# ProcessRunner
+# ShellRunner
 
 Run command line tools inside CSharp.
 
 Example running some dotnet CLI commands:
 
 ```csharp
-using ProcessRunner;
+using ShellRunner;
 
 CommandRunner
     .UsePowershell() 
@@ -21,5 +21,5 @@ CommandRunner
     .Run();
 ```
 
-Process Runner is really useful to create a wrapper for several other 
+Shell Runner is really useful to create a wrapper for several other 
 commands and to work with data before or after you run the commands.
