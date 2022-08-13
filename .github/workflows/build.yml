@@ -9,7 +9,6 @@ env:
   SLN_PATH: src/ShellRunner.sln
   TEST_PATH: src/TestApp/bin/Release/net6.0/TestApp.dll
   PROJECT_PATH: src/ShellRunner/ShellRunner.csproj
-  ARTIFACTS_PATH: src/ShellRunner/bin/Release
 
 jobs:
   build:
@@ -49,14 +48,14 @@ jobs:
            -p:PackageVersion=$BUILD_VERSION
 
     - name: Push ShellRunner Pre-Release Nuget
-      run: dotnet nuget push $ARTIFACTS_PATH/ShellRunner.$BUILD_VERSION-alpha.nupkg 
+      run: dotnet nuget push /src/**/*.$BUILD_VERSION-alpha.nupkg  
            --api-key ${{secrets.NUGETKEY}} --source https://api.nuget.org/v3/index.json
            
     - name: Upload ShellRunner Release Artifacts
       uses: actions/upload-artifact@v2
       with:
-        name: Nugets
-        path: $ARTIFACTS_PATH/ShellRunner.$BUILD_VERSION.nupkg
+        name: ReleaseNugets
+        path: /src/**/*.$BUILD_VERSION.nupkg
 
   release:
     needs: build
@@ -69,11 +68,11 @@ jobs:
     - name: Download artifacts
       uses: actions/download-artifact@v2
       with:
-        name: Nugets    
+        name: ReleaseNugets    
       
     - name: Display structure of downloaded files
       run: ls -R
       
     - name: Push ShellRunner Pre-Release Nuget
-      run: dotnet nuget push $ARTIFACTS_PATH/ShellRunner.$BUILD_VERSION.nupkg 
+      run: dotnet nuget push /src/**/*.$BUILD_VERSION.nupkg 
            --api-key ${{secrets.NUGETKEY}} --source https://api.nuget.org/v3/index.json
