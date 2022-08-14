@@ -19,6 +19,9 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 6.0.x
+        
+    - name: Test Echo
+      run: echo $BUILD_VERSION
 
     - name: Restore dependencies
       run: dotnet restore $SLN_PATH
@@ -40,6 +43,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+
+    - name: Test Echo
+      run: echo $BUILD_VERSION
+
     - name: Download artifacts
       uses: actions/download-artifact@v2
       with:
