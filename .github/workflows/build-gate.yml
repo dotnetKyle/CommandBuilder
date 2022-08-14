@@ -9,7 +9,7 @@ env:
   SLN_PATH: src/ShellRunner.sln
   PROJECT_PATH: src/ShellRunner/ShellRunner.csproj
   TEST_PATH: src/TestApp/bin/Release/net6.0/TestApp.dll
-  RELEASE_ARTIFACTS: ./**/*.$BUILD_VERSION.nupkg
+  RELEASE_ARTIFACTS: /**/*.$BUILD_VERSION.nupkg
 
 jobs:
   build:
