@@ -10,8 +10,7 @@ env:
   TEST_PATH: src/TestApp/bin/Release/net6.0/TestApp.dll
 
 jobs:
-  build-gate:
-
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -29,6 +28,22 @@ jobs:
            -c Release 
            --no-restore 
            -p:Version=$BUILD_VERSION
-           
+
+    - name: Upload ShellRunner Build Artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: BuildArtifacts
+        path: src/**/bin/Release/**/*
+
+  build-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Download artifacts
+      uses: actions/download-artifact@v2
+      with:
+        name: BuildArtifacts    
+        
     - name: Test
       run: dotnet $TEST_PATH
+    
