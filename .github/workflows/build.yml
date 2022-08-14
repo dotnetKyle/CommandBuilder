@@ -37,7 +37,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: BuildArtifacts
-        path: src/**/bin/Release/**/*
+        path: ./**/bin/Release/**/*
 
   pre-release:
     needs: build
@@ -66,7 +66,7 @@ jobs:
            -p:PackageVersion=$BUILD_VERSION-alpha
 
     - name: Push ShellRunner Pre-Release Nuget
-      run: dotnet nuget push src/**/*.$BUILD_VERSION-alpha.nupkg 
+      run: dotnet nuget push ./**/*.$BUILD_VERSION-alpha.nupkg 
            --api-key ${{secrets.NUGETKEY}} --source https://api.nuget.org/v3/index.json
 
   release:
@@ -96,5 +96,5 @@ jobs:
            -p:PackageVersion=$BUILD_VERSION
            
     - name: Push ShellRunner Pre-Release Nuget
-      run: dotnet nuget push src/**/*.$BUILD_VERSION.nupkg 
+      run: dotnet nuget push ./**/*.$BUILD_VERSION.nupkg 
            --api-key ${{secrets.NUGETKEY}} --source https://api.nuget.org/v3/index.json
