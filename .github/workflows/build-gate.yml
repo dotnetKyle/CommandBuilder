@@ -46,11 +46,14 @@ jobs:
 
     - name: Test Echo
       run: echo $BUILD_VERSION
-
+      
     - name: Download artifacts
       uses: actions/download-artifact@v2
       with:
-        name: BuildArtifacts    
+        name: BuildArtifacts
+
+    - name: Display structure of downloaded files
+      run: ls -R
         
     - name: Test
       run: dotnet $TEST_PATH
