@@ -32,6 +32,31 @@ jobs:
 
     - name: Test
       run: dotnet $TEST_PATH
+           
+    - name: Upload ShellRunner Build Artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: BuildArtifacts
+        path: ./**/bin/Release/**/*
+
+  pre-release:
+    needs: build
+    name: Deploy Pre-Release Nugets
+    environment: 
+      name: Integration
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Download artifacts
+      uses: actions/download-artifact@v2
+      with:
+        name: BuildArtifacts    
+      
+    - name: Display structure of downloaded files
+      run: ls -R
+
+    - name: Test Echo
+      run: echo $BUILD_VERSION
 
     - name: Pack-Test
       run: dotnet pack $PROJECT_PATH
@@ -40,26 +65,13 @@ jobs:
            --no-build
            -p:PackageVersion=$BUILD_VERSION-alpha
 
-    - name: Pack-Release
-      run: dotnet pack $PROJECT_PATH
-           -c Release 
-           --no-restore 
-           --no-build
-           -p:PackageVersion=$BUILD_VERSION
-
     - name: Push ShellRunner Pre-Release Nuget
-      run: dotnet nuget push src/**/*.$BUILD_VERSION-alpha.nupkg  
+      run: dotnet nuget push ./**/*.$BUILD_VERSION-alpha.nupkg 
            --api-key ${{secrets.NUGETKEY}} --source https://api.nuget.org/v3/index.json
-           
-    - name: Upload ShellRunner Release Artifacts
-      uses: actions/upload-artifact@v2
-      with:
-        name: ReleaseNugets
-        path: src/**/*.$BUILD_VERSION.nupkg
 
   release:
     needs: build
-    name: Deploy Nugets to Production
+    name: Deploy Release Nugets
     environment: 
       name: Production
     runs-on: ubuntu-latest
@@ -68,11 +80,21 @@ jobs:
     - name: Download artifacts
       uses: actions/download-artifact@v2
       with:
-        name: ReleaseNugets    
+        name: BuildArtifacts    
       
     - name: Display structure of downloaded files
       run: ls -R
       
+    - name: Test Echo
+      run: echo $BUILD_VERSION
+
+    - name: Pack-Release
+      run: dotnet pack $PROJECT_PATH
+           -c Release 
+           --no-restore 
+           --no-build
+           -p:PackageVersion=$BUILD_VERSION
+           
     - name: Push ShellRunner Pre-Release Nuget
-      run: dotnet nuget push src/**/*.$BUILD_VERSION.nupkg 
+      run: dotnet nuget push ./**/*.$BUILD_VERSION.nupkg 
            --api-key ${{secrets.NUGETKEY}} --source https://api.nuget.org/v3/index.json

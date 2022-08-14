@@ -10,8 +10,7 @@ env:
   TEST_PATH: src/TestApp/bin/Release/net6.0/TestApp.dll
 
 jobs:
-  build-gate:
-
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -20,6 +19,9 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 6.0.x
+        
+    - name: Test Echo
+      run: echo $BUILD_VERSION
 
     - name: Restore dependencies
       run: dotnet restore $SLN_PATH
@@ -29,6 +31,30 @@ jobs:
            -c Release 
            --no-restore 
            -p:Version=$BUILD_VERSION
-           
+
+    - name: Upload ShellRunner Build Artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: BuildArtifacts
+        path: ./**/bin/Release/**/*
+
+  build-test:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Test Echo
+      run: echo $BUILD_VERSION
+      
+    - name: Download artifacts
+      uses: actions/download-artifact@v2
+      with:
+        name: BuildArtifacts
+
+    - name: Display structure of downloaded files
+      run: ls -R
+        
     - name: Test
       run: dotnet $TEST_PATH
+    
