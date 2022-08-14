@@ -7,7 +7,9 @@ on:
 env:
   BUILD_VERSION: 0.1.${{github.run_number}}
   SLN_PATH: src/ShellRunner.sln
+  PROJECT_PATH: src/ShellRunner/ShellRunner.csproj
   TEST_PATH: src/TestApp/bin/Release/net6.0/TestApp.dll
+  RELEASE_ARTIFACTS: ./**/*.$BUILD_VERSION.nupkg
 
 jobs:
   build:
@@ -28,6 +30,20 @@ jobs:
            -c Release 
            --no-restore 
            -p:Version=$BUILD_VERSION
+
+    - name: Test-Pack
+      run: dotnet pack $PROJECT_PATH
+           -c Release
+           --no-restore
+           --no-build
+           -p:PackageVersion=$BUILD_VERSION-alpha
+           
+    - name: Upload Test Artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: BuildArtifacts
+        path: RELEASE_ARTIFACTS
+        if-no-files-found: error
 
     - name: Upload ShellRunner Build Artifacts
       uses: actions/upload-artifact@v2
