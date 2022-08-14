@@ -36,6 +36,7 @@ jobs:
         path: src/**/bin/Release/**/*
 
   build-test:
+    needs: build
     runs-on: ubuntu-latest
 
     steps:
