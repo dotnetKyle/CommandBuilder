@@ -9,7 +9,7 @@ env:
   SLN_PATH: src/ShellRunner.sln
   PROJECT_PATH: src/ShellRunner/ShellRunner.csproj
   TEST_PATH: src/TestApp/bin/Release/net6.0/TestApp.dll
-  RELEASE_ARTIFACTS: /**/*.$BUILD_VERSION.nupkg
+  PRE_RELEASE_ARTIFACTS: /**/*.$BUILD_VERSION-alpha.nupkg
 
 jobs:
   build:
@@ -42,14 +42,14 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: BuildArtifacts
-        path: RELEASE_ARTIFACTS
+        path: $PRE_RELEASE_ARTIFACTS
         if-no-files-found: error
 
     - name: Upload ShellRunner Build Artifacts
       uses: actions/upload-artifact@v2
       with:
-        name: BuildArtifacts
-        path: ./**/bin/Release/**/*
+        name: PreReleaseArtifacts
+        path: /**/bin/Release/**/*
 
   build-test:
     needs: build
@@ -60,7 +60,7 @@ jobs:
     - name: Download artifacts
       uses: actions/download-artifact@v2
       with:
-        name: BuildArtifacts
+        name: PreReleaseArtifacts
         
     - name: Test
       run: dotnet $TEST_PATH
