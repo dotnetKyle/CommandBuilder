@@ -9,6 +9,8 @@ env:
   SLN_PATH: src/ShellRunner.sln
   TEST_PATH: src/TestApp/bin/Release/net6.0/TestApp.dll
   PROJECT_PATH: src/ShellRunner/ShellRunner.csproj
+  PRE_RELEASE_ARTIFACTS: ./**/ShellRunner.$BUILD_VERSION-alpha.nupkg
+  RELEASE_ARTIFACTS: ./**/ShellRunner.$BUILD_VERSION.nupkg
 
 jobs:
   build:
@@ -33,11 +35,31 @@ jobs:
     - name: Test
       run: dotnet $TEST_PATH
            
-    - name: Upload ShellRunner Build Artifacts
+    - name: Pack-Alpha
+      run: dotnet pack $PROJECT_PATH
+           -c Release 
+           --no-restore 
+           --no-build
+           -p:PackageVersion=$BUILD_VERSION-alpha
+
+    - name: Pack-Release
+      run: dotnet pack $PROJECT_PATH
+           -c Release 
+           --no-restore 
+           --no-build
+           -p:PackageVersion=$BUILD_VERSION
+
+    - name: Upload ShellRunner PreRelease Artifacts
       uses: actions/upload-artifact@v2
       with:
-        name: BuildArtifacts
-        path: ./**/bin/Release/**/*
+        name: PreReleaseArtifacts
+        path: $PRE_RELEASE_ARTIFACTS
+           
+    - name: Upload ShellRunner Release Artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: ReleaseArtifacts
+        path: $RELEASE_ARTIFACTS
 
   pre-release:
     needs: build
@@ -50,23 +72,10 @@ jobs:
     - name: Download artifacts
       uses: actions/download-artifact@v2
       with:
-        name: BuildArtifacts    
+        name: PreReleaseArtifacts    
       
-    - name: Display structure of downloaded files
-      run: ls -R
-
-    - name: Test Echo
-      run: echo $BUILD_VERSION
-
-    - name: Pack-Test
-      run: dotnet pack $PROJECT_PATH
-           -c Release 
-           --no-restore 
-           --no-build
-           -p:PackageVersion=$BUILD_VERSION-alpha
-
     - name: Push ShellRunner Pre-Release Nuget
-      run: dotnet nuget push ./**/*.$BUILD_VERSION-alpha.nupkg 
+      run: dotnet nuget push ./**/*-alpha.nupkg 
            --api-key ${{secrets.NUGETKEY}} --source https://api.nuget.org/v3/index.json
 
   release:
@@ -80,21 +89,8 @@ jobs:
     - name: Download artifacts
       uses: actions/download-artifact@v2
       with:
-        name: BuildArtifacts    
-      
-    - name: Display structure of downloaded files
-      run: ls -R
-      
-    - name: Test Echo
-      run: echo $BUILD_VERSION
-
-    - name: Pack-Release
-      run: dotnet pack $PROJECT_PATH
-           -c Release 
-           --no-restore 
-           --no-build
-           -p:PackageVersion=$BUILD_VERSION
+        name: ReleaseArtifacts    
            
     - name: Push ShellRunner Pre-Release Nuget
-      run: dotnet nuget push ./**/*.$BUILD_VERSION.nupkg 
+      run: dotnet nuget push ./**/*.nupkg 
            --api-key ${{secrets.NUGETKEY}} --source https://api.nuget.org/v3/index.json
