@@ -9,7 +9,7 @@ env:
   SLN_PATH: src/ShellRunner.sln
   PROJECT_PATH: src/ShellRunner/ShellRunner.csproj
   TEST_PATH: src/TestApp/bin/Release/net6.0/TestApp.dll
-  PRE_RELEASE_ARTIFACTS: .**/*.$BUILD_VERSION-alpha.nupkg
+  PRE_RELEASE_ARTIFACTS: "**/*.$BUILD_VERSION-alpha.nupkg"
 
 jobs:
   build:
@@ -49,7 +49,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: PreReleaseArtifacts
-        path: .**/bin/Release/**/*
+        path: "**/bin/Release/**/*"
 
   build-test:
     needs: build

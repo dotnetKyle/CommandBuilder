@@ -9,8 +9,8 @@ env:
   SLN_PATH: src/ShellRunner.sln
   TEST_PATH: src/TestApp/bin/Release/net6.0/TestApp.dll
   PROJECT_PATH: src/ShellRunner/ShellRunner.csproj
-  PRE_RELEASE_ARTIFACTS: .**/*.$BUILD_VERSION-alpha.nupkg
-  RELEASE_ARTIFACTS: .**/*.$BUILD_VERSION.nupkg
+  PRE_RELEASE_ARTIFACTS: "**/*.$BUILD_VERSION-alpha.nupkg"
+  RELEASE_ARTIFACTS: "**/*.$BUILD_VERSION.nupkg"
 
 jobs:
   build:
@@ -75,7 +75,7 @@ jobs:
         name: PreReleaseArtifacts    
       
     - name: Push ShellRunner Pre-Release Nuget
-      run: dotnet nuget push .**/*-alpha.nupkg 
+      run: dotnet nuget push **/*-alpha.nupkg 
            --api-key ${{secrets.NUGETKEY}} --source https://api.nuget.org/v3/index.json
 
   release:
@@ -92,5 +92,5 @@ jobs:
         name: ReleaseArtifacts    
            
     - name: Push ShellRunner Pre-Release Nuget
-      run: dotnet nuget push .**/*.nupkg 
+      run: dotnet nuget push **/*.nupkg 
            --api-key ${{secrets.NUGETKEY}} --source https://api.nuget.org/v3/index.json
