@@ -42,11 +42,16 @@ jobs:
     - name: Print Files
       run: ls -R
 
+    - name: Test Echo
+      run: echo ./src/ShellRunner/bin/Release/ShellRunner.$BUILD_VERSION-alpha.nupkg
+    - name: Test Echo2
+      run: echo ./src/ShellRunner/bin/Release/ShellRunner.${{env.BUILD_VERSION}}-alpha.nupkg
+
     - name: Upload Test Nuget Artifacts
       uses: actions/upload-artifact@v2
       with:
         name: BuildArtifacts
-        path: ./src/ShellRunner/bin/Release/ShellRunner.$BUILD_VERSION-alpha.nupkg #${{env.PRE_RELEASE_ARTIFACTS}}
+        path: ./src/ShellRunner/bin/Release/ShellRunner.${{env.BUILD_VERSION}}-alpha.nupkg #${{env.PRE_RELEASE_ARTIFACTS}}
         if-no-files-found: error
 
     - name: Upload Test Artifacts
