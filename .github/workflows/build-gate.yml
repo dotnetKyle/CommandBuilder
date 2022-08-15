@@ -38,7 +38,10 @@ jobs:
            --no-restore
            --no-build
            -p:PackageVersion=$BUILD_VERSION-alpha
-           
+
+    - name: Print Files
+      run: ls -R
+
     - name: Upload Test Nuget Artifacts
       uses: actions/upload-artifact@v2
       with:
