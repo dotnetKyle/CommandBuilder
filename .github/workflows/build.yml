@@ -9,8 +9,10 @@ env:
   SLN_PATH: src/ShellRunner.sln
   TEST_PATH: src/TestApp/bin/Release/net6.0/TestApp.dll
   PROJECT_PATH: src/ShellRunner/ShellRunner.csproj
-  PRE_RELEASE_ARTIFACTS: ./**/ShellRunner.$BUILD_VERSION-alpha.nupkg
-  RELEASE_ARTIFACTS: ./**/ShellRunner.$BUILD_VERSION.nupkg
+  PRE_RELEASE_ARTIFACTS: src/ShellRunner/bin/Release/netstandard2.0/ShellRunner.$BUILD_VERSION-alpha.nupkg
+  PRE_RELEASE_PATH: ShellRunner/bin/Release/netstandard2.0/ShellRunner.$BUILD_VERSION-alpha.nupkg
+  RELEASE_ARTIFACTS: src/ShellRunner/bin/Release/netstandard2.0/ShellRunner.$BUILD_VERSION.nupkg
+  RELEASE_PATH: ShellRunner/bin/Release/netstandard2.0/ShellRunner.$BUILD_VERSION.nupkg
 
 jobs:
   build:
@@ -72,10 +74,10 @@ jobs:
     - name: Download artifacts
       uses: actions/download-artifact@v2
       with:
-        name: PreReleaseArtifacts    
+        name: PreReleaseArtifacts
       
     - name: Push ShellRunner Pre-Release Nuget
-      run: dotnet nuget push ./**/*-alpha.nupkg 
+      run: dotnet nuget push $PRE_RELEASE_PATH
            --api-key ${{secrets.NUGETKEY}} --source https://api.nuget.org/v3/index.json
 
   release:
@@ -91,6 +93,6 @@ jobs:
       with:
         name: ReleaseArtifacts    
            
-    - name: Push ShellRunner Pre-Release Nuget
-      run: dotnet nuget push ./**/*.nupkg 
+    - name: Push ShellRunner Release Nuget
+      run: dotnet nuget push $RELEASE_PATH 
            --api-key ${{secrets.NUGETKEY}} --source https://api.nuget.org/v3/index.json

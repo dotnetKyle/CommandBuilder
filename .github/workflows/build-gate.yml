@@ -7,7 +7,10 @@ on:
 env:
   BUILD_VERSION: 0.1.${{github.run_number}}
   SLN_PATH: src/ShellRunner.sln
-  TEST_PATH: src/TestApp/bin/Release/net6.0/TestApp.dll
+  PROJECT_PATH: src/ShellRunner/ShellRunner.csproj
+  PRE_RELEASE_ARTIFACTS: src/ShellRunner/bin/Release/ShellRunner.${{ env.BUILD_VERSION }}-alpha.nupkg
+  TEST_ARTIFACTS: src/**/bin/**/*
+  TEST_PATH: TestApp/bin/Release/net6.0/TestApp.dll
 
 jobs:
   build:
@@ -29,23 +32,44 @@ jobs:
            --no-restore 
            -p:Version=$BUILD_VERSION
 
-    - name: Upload ShellRunner Build Artifacts
+    - name: Test-Pack
+      run: dotnet pack $PROJECT_PATH
+           -c Release
+           --no-restore
+           --no-build
+           -p:PackageVersion=$BUILD_VERSION-alpha
+
+    - name: Print Files
+      run: ls -R
+
+    #- name: Test Echo
+    #  run: echo ./src/ShellRunner/bin/Release/ShellRunner.$BUILD_VERSION-alpha.nupkg
+    - name: Test Echo
+      run: echo ${{env.PRE_RELEASE_ARTIFACTS}}
+
+    - name: Upload Test Nuget Artifacts
       uses: actions/upload-artifact@v2
       with:
         name: BuildArtifacts
-        path: ./**/bin/Release/**/*
+        path: ${{env.PRE_RELEASE_ARTIFACTS}}
+        if-no-files-found: error
+
+    - name: Upload Test Artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: TestArtifacts
+        path: ${{env.TEST_ARTIFACTS}}
 
   build-test:
     needs: build
     runs-on: ubuntu-latest
 
-    steps:
-  
+    steps:  
     - name: Download artifacts
       uses: actions/download-artifact@v2
       with:
-        name: BuildArtifacts
+        name: TestArtifacts
         
     - name: Test
-      run: dotnet $TEST_PATH
+      run: dotnet ${{env.TEST_PATH}}
     
