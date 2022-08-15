@@ -8,8 +8,9 @@ env:
   BUILD_VERSION: 0.1.${{github.run_number}}
   SLN_PATH: src/ShellRunner.sln
   PROJECT_PATH: src/ShellRunner/ShellRunner.csproj
-  TEST_PATH: src/TestApp/bin/Release/net6.0/TestApp.dll
-  PRE_RELEASE_ARTIFACTS: "**/*.$BUILD_VERSION-alpha.nupkg"
+  PRE_RELEASE_ARTIFACTS: src/**/*.$BUILD_VERSION-alpha.nupkg
+  TEST_ARTIFACTS: src/**/bin/**/*
+  TEST_PATH: TestApp/bin/Release/net6.0/TestApp.dll
 
 jobs:
   build:
@@ -38,29 +39,28 @@ jobs:
            --no-build
            -p:PackageVersion=$BUILD_VERSION-alpha
            
-    - name: Upload Test Artifacts
+    - name: Upload Test Nuget Artifacts
       uses: actions/upload-artifact@v2
       with:
         name: BuildArtifacts
         path: $PRE_RELEASE_ARTIFACTS
         if-no-files-found: error
 
-    - name: Upload ShellRunner Build Artifacts
+    - name: Upload Test Artifacts
       uses: actions/upload-artifact@v2
       with:
-        name: PreReleaseArtifacts
-        path: "**/bin/Release/**/*"
+        name: TestArtifacts
+        path: $TEST_ARTIFACTS
 
   build-test:
     needs: build
     runs-on: ubuntu-latest
 
-    steps:
-  
+    steps:  
     - name: Download artifacts
       uses: actions/download-artifact@v2
       with:
-        name: PreReleaseArtifacts
+        name: TestArtifacts
         
     - name: Test
       run: dotnet $TEST_PATH
