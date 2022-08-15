@@ -46,7 +46,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: BuildArtifacts
-        path: ${{env.PRE_RELEASE_ARTIFACTS}}
+        path: src/ShellRunner/bin/Release/ShellRunner.$BUILD_VERSION-alpha.nupkg #${{env.PRE_RELEASE_ARTIFACTS}}
         if-no-files-found: error
 
     - name: Upload Test Artifacts
