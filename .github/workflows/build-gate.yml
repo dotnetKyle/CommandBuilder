@@ -46,14 +46,14 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: BuildArtifacts
-        path: $PRE_RELEASE_ARTIFACTS
+        path: ${{env.PRE_RELEASE_ARTIFACTS}}
         if-no-files-found: error
 
     - name: Upload Test Artifacts
       uses: actions/upload-artifact@v2
       with:
         name: TestArtifacts
-        path: $TEST_ARTIFACTS
+        path: ${{env.TEST_ARTIFACTS}}
 
   build-test:
     needs: build
@@ -66,5 +66,5 @@ jobs:
         name: TestArtifacts
         
     - name: Test
-      run: dotnet $TEST_PATH
+      run: dotnet ${{env.TEST_PATH}}
     
