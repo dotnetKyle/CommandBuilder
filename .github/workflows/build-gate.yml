@@ -8,7 +8,7 @@ env:
   BUILD_VERSION: 0.1.${{github.run_number}}
   SLN_PATH: src/ShellRunner.sln
   PROJECT_PATH: src/ShellRunner/ShellRunner.csproj
-  PRE_RELEASE_ARTIFACTS: src/**/*.$BUILD_VERSION-alpha.nupkg
+  PRE_RELEASE_ARTIFACTS: src/ShellRunner/bin/Release/ShellRunner.${{env.BUILD_VERSION}}-alpha.nupkg
   TEST_ARTIFACTS: src/**/bin/**/*
   TEST_PATH: TestApp/bin/Release/net6.0/TestApp.dll
 
@@ -42,16 +42,16 @@ jobs:
     - name: Print Files
       run: ls -R
 
+    #- name: Test Echo
+    #  run: echo ./src/ShellRunner/bin/Release/ShellRunner.$BUILD_VERSION-alpha.nupkg
     - name: Test Echo
-      run: echo ./src/ShellRunner/bin/Release/ShellRunner.$BUILD_VERSION-alpha.nupkg
-    - name: Test Echo2
-      run: echo ./src/ShellRunner/bin/Release/ShellRunner.${{env.BUILD_VERSION}}-alpha.nupkg
+      run: echo ${{env.PRE_RELEASE_ARTIFACTS}}
 
     - name: Upload Test Nuget Artifacts
       uses: actions/upload-artifact@v2
       with:
         name: BuildArtifacts
-        path: ./src/ShellRunner/bin/Release/ShellRunner.${{env.BUILD_VERSION}}-alpha.nupkg #${{env.PRE_RELEASE_ARTIFACTS}}
+        path: ${{env.PRE_RELEASE_ARTIFACTS}}
         if-no-files-found: error
 
     - name: Upload Test Artifacts
