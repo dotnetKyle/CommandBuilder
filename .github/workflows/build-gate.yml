@@ -8,7 +8,7 @@ env:
   BUILD_VERSION: 0.1.${{github.run_number}}
   SLN_PATH: src/ShellRunner.sln
   PROJECT_PATH: src/ShellRunner/ShellRunner.csproj
-  PRE_RELEASE_ARTIFACTS: src/ShellRunner/bin/Release/ShellRunner.$BUILD_VERSION-alpha.nupkg
+  PRE_RELEASE_ARTIFACTS: src/ShellRunner/bin/Release/ShellRunner.${{env.BUILD_VERSION}}-alpha.nupkg
   TEST_ARTIFACTS: src/**/bin/**/*
   TEST_PATH: TestApp/bin/Release/net6.0/TestApp.dll
 
